@@ -28,6 +28,9 @@ url = URL.create(
 )
 engine = create_engine(url)
 
+with engine.connect() as conn:
+    conn.execute(text("ALTER DATABASE artdb OWNER TO postgres"))
+
 Base.metadata.create_all(bind=engine)
 
 print("DataBases are successfully created!")
