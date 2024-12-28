@@ -1,1 +1,4 @@
-#.gitignore
+pip install fastapi
+pip install uvicorn
+pip install sqlalchemy
+pip install psycopg2
