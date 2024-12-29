@@ -7,7 +7,7 @@ class CreatorCreate(BaseModel):
     birth_year: int
     death_year: Optional[int] = None
     country: str
-    main_style: str
+    main_focus: str 
 
 class CreatorResponse(BaseModel):
     id: int
@@ -15,7 +15,7 @@ class CreatorResponse(BaseModel):
     birth_year: int
     death_year: Optional[int]
     country: str
-    main_style: str
+    main_focus: str 
 
     class Config:
         orm_mode = True
@@ -27,7 +27,7 @@ class ArtworkCreate(BaseModel):
     dimensions: str
     material: str
     creator_id: int
-    storage_id: int
+    storage_id: int  
 
 class ArtworkResponse(BaseModel):
     id: int
