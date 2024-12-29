@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 import models, schemas
-from datetime import date
+from fastapi import HTTPException
 
 def apply_sort(query, sort_by: str, asc: bool, valid_columns: dict):
     if sort_by not in valid_columns:
@@ -23,14 +23,14 @@ def read_creators(db: Session, sort_by: str = None, asc: bool = True):
     if sort_by:
         try:
             query = apply_sort(query, sort_by, asc, {
-                "full_name": models.Creator.full_name,
+                "name": models.Creator.name,
                 "birth_year": models.Creator.birth_year,
                 "death_year": models.Creator.death_year,
                 "country": models.Creator.country,
-                "main_style": models.Creator.main_style
+                "main_focus": models.Creator.main_focus
             })
         except ValueError as e:
-            raise ValueError(e)
+            raise HTTPException(status_code=400, detail=str(e))
 
     return db.execute(query).scalars().all()
 
@@ -78,7 +78,7 @@ def read_artworks(db: Session, sort_by: str = None, asc: bool = True):
                 "material": models.Artwork.material
             })
         except ValueError as e:
-            raise ValueError(e)
+            raise HTTPException(status_code=400, detail=str(e))
 
     return db.execute(query).scalars().all()
 
@@ -125,7 +125,7 @@ def read_storages(db: Session, sort_by: str = None, asc: bool = True):
                 "opening_date": models.Storage.opening_date
             })
         except ValueError as e:
-            raise ValueError(e)
+            raise HTTPException(status_code=400, detail=str(e))
 
     return db.execute(query).scalars().all()
 
