@@ -3,7 +3,7 @@ from datetime import date
 from typing import List, Optional
 
 class CreatorCreate(BaseModel):
-    full_name: str
+    name: str
     birth_year: int
     death_year: Optional[int] = None
     country: str
@@ -11,7 +11,7 @@ class CreatorCreate(BaseModel):
 
 class CreatorResponse(BaseModel):
     id: int
-    full_name: str
+    name: str
     birth_year: int
     death_year: Optional[int]
     country: str
