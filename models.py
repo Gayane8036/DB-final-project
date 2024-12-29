@@ -13,6 +13,7 @@ class Creator(Base):
     death_year = Column(Integer, nullable=True)
     country = Column(String)
     main_focus = Column(String)
+    email = Column(String, nullable=True)
 
 class Artwork(Base):
     __tablename__ = 'artworks'
