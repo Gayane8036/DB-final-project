@@ -13,7 +13,7 @@ def get_db():
 
 app = FastAPI()
 
-@app.post("/creators/", response_model=scheme.CreatorResponse)
+@app.post("/creators/", response_model=schemas.CreatorResponse)
 def create_creator(creator: scheme.CreatorCreate, db: Session = Depends(get_db)):
     return crud.create_creator(db=db, creator=creator)
 
