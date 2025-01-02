@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from datetime import date
 from typing import List, Optional
+from sqlalchemy.dialects.postgresql import JSONB
 
 class CreatorCreate(BaseModel):
     name: str
