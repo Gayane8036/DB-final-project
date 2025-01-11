@@ -73,3 +73,24 @@ def get_storage_place(storage_place_id: int, db: Session = Depends(get_db)):
     if not storage_place:
         raise HTTPException(status_code=404, detail="Storage place not found")
     return storage_place
+
+@app.get("/creators/filter", response_model=List[CreatorResponse])
+def filter_creators(name: str = "", min_age: int = 0, db: Session = Depends(get_db)):
+    return crud.filter_creators(db=db, name=name, min_age=min_age)
+    
+@app.get("/artworks_by_creator/{creator_id}", response_model=List[ArtworkResponse])
+def get_artworks_by_creator(creator_id: int, db: Session = Depends(get_db)):
+    return crud.get_artworks_by_creator(db=db, creator_id=creator_id)
+
+@app.put("/artworks/{artwork_id}", response_model=ArtworkResponse)
+def update_artwork(artwork_id: int, artwork: ArtworkCreate, db: Session = Depends(get_db)):
+    return crud.update_artwork(db=db, artwork_id=artwork_id, artwork=artwork)
+
+@app.get("/creators/artworks_count", response_model=List[CreatorResponse])
+def get_creators_with_artworks_count(db: Session = Depends(get_db)):
+    return crud.get_creators_with_artworks_count(db=db)
+    
+@app.get("/creators/sorted", response_model=List[CreatorResponse])
+def get_sorted_creators(sort_by: str = "name", db: Session = Depends(get_db)):
+    return crud.get_sorted_creators(db=db, sort_by=sort_by)
+
