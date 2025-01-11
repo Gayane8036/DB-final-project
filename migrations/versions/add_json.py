@@ -1,3 +1,9 @@
+"""Added JSON column
+
+Revision ID: abc123xyz456
+Revises: None
+Create Date: 2025-01-11 13:38:01.698290
+"""
 from typing import Sequence, Union
 
 from alembic import op
