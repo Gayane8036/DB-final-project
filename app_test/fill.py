@@ -1,9 +1,7 @@
 import requests
 
-# Базовый URL вашего приложения FastAPI
 BASE_URL = "http://127.0.0.1:8000"
 
-# Данные для заполнения
 creators_data = [
     {"full_name": "Leonardo da Vinci", "country": "Italy", "life_years": "1452-1519", "main_direction": "Renaissance"},
     {"full_name": "Vincent van Gogh", "country": "Netherlands", "life_years": "1853-1890", "main_direction": "Post-Impressionism"},
@@ -22,7 +20,6 @@ storage_places_data = [
     {"name": "Museo Reina Sofía", "type": "Museum", "country": "Spain", "opening_date": "1992-09-10"},
 ]
 
-# Функция для отправки POST-запросов
 def post_data(endpoint, data):
     url = f"{BASE_URL}/{endpoint}/"
     response = requests.post(url, json=data)
@@ -31,15 +28,14 @@ def post_data(endpoint, data):
     else:
         print(f"Ошибка: {response.status_code}, {response.text}")
 
-# Заполнение данных
-print("Добавляем создателей...")
+print("adding creators...")
 for creator in creators_data:
     post_data("creators", creator)
 
-print("Добавляем произведения...")
+print("adding artworks")
 for artwork in artworks_data:
     post_data("artworks", artwork)
 
-print("Добавляем места хранения...")
+print("adding storage")
 for storage_place in storage_places_data:
     post_data("storage_places", storage_place)
