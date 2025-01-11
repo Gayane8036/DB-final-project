@@ -1,41 +1,56 @@
 import requests
+import random
+from faker import Faker
+
+fake = Faker()
 
 BASE_URL = "http://127.0.0.1:8000"
 
-creators_data = [
-    {"full_name": "Leonardo da Vinci", "country": "Italy", "life_years": "1452-1519", "main_direction": "Renaissance"},
-    {"full_name": "Vincent van Gogh", "country": "Netherlands", "life_years": "1853-1890", "main_direction": "Post-Impressionism"},
-    {"full_name": "Pablo Picasso", "country": "Spain", "life_years": "1881-1973", "main_direction": "Cubism"},
-]
+def create_creator():
+    creator_data = {
+        "full_name": fake.name(),
+        "country": fake.country(),
+        "years_of_life": f"{random.randint(1800, 1900)} - {random.randint(1900, 2000)}",
+        "main_direction": fake.job()
+    }
+    response = requests.post(f"{BASE_URL}/creators/", json=creator_data)
+    return response.json()
 
-artworks_data = [
-    {"name": "Mona Lisa", "type": "Painting", "dimensions": "77 x 53 cm", "material": "Oil on poplar", "cost": 1000000, "creator_id": 1},
-    {"name": "Starry Night", "type": "Painting", "dimensions": "73.7 x 92.1 cm", "material": "Oil on canvas", "cost": 900000, "creator_id": 2},
-    {"name": "Guernica", "type": "Painting", "dimensions": "349 x 776 cm", "material": "Oil on canvas", "cost": 1200000, "creator_id": 3},
-]
+def create_storage_place():
+    storage_place_data = {
+        "name": fake.company(),
+        "type": random.choice(["Museum", "Gallery", "Private Collection"]),
+        "country": fake.country(),
+        "opening_date": f"{random.randint(1900, 2025)}-01-01"
+    }
+    response = requests.post(f"{BASE_URL}/storage_places/", json=storage_place_data)
+    return response.json()
 
-storage_places_data = [
-    {"name": "Louvre Museum", "type": "Museum", "country": "France", "opening_date": "1793-08-10"},
-    {"name": "Van Gogh Museum", "type": "Museum", "country": "Netherlands", "opening_date": "1973-06-02"},
-    {"name": "Museo Reina Sofía", "type": "Museum", "country": "Spain", "opening_date": "1992-09-10"},
-]
+def create_artwork(creator_id, storage_place_id):
+    artwork_data = {
+        "title": fake.word(),
+        "type": random.choice(["Painting", "Sculpture", "Drawing"]),
+        "dimensions": f"{random.randint(10, 200)} x {random.randint(10, 200)}",
+        "material": random.choice(["Oil on Canvas", "Marble", "Wood", "Clay"]),
+        "price": round(random.uniform(100, 10000), 2),
+        "creator_id": creator_id,
+        "storage_place_id": storage_place_id
+    }
+    response = requests.post(f"{BASE_URL}/artworks/", json=artwork_data)
+    return response.json()
 
-def post_data(endpoint, data):
-    url = f"{BASE_URL}/{endpoint}/"
-    response = requests.post(url, json=data)
-    if response.status_code == 200:
-        print(f"Добавлено: {data}")
-    else:
-        print(f"Ошибка: {response.status_code}, {response.text}")
+def generate_data(num_creators=10, num_storage_places=5, num_artworks=20):
+    storage_places = [create_storage_place() for _ in range(num_storage_places)]
+    print("Storage places created")
 
-print("adding creators...")
-for creator in creators_data:
-    post_data("creators", creator)
+    creators = [create_creator() for _ in range(num_creators)]
+    print("Creators created")
 
-print("adding artworks")
-for artwork in artworks_data:
-    post_data("artworks", artwork)
+    for artwork in range(num_artworks):
+        creator = random.choice(creators)
+        storage_place = random.choice(storage_places)
+        create_artwork(creator["id"], storage_place["id"])
+        print(f"Artwork {artwork + 1} created")
 
-print("adding storage")
-for storage_place in storage_places_data:
-    post_data("storage_places", storage_place)
+if __name__ == "__main__":
+    generate_data()
