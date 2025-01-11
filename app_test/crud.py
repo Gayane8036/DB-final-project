@@ -1,7 +1,10 @@
 from sqlalchemy.orm import Session
 from models import Creator, Artwork, StoragePlace
 from schemas import CreatorCreate, ArtworkCreate, StorageCreate
-
+from sqlalchemy import select
+from sqlalchemy.orm import joinedload
+from sqlalchemy import func
+from sqlalchemy import asc, desc
 
 # CRUD операции для Creator
 def create_creator(db: Session, creator: CreatorCreate):
@@ -70,3 +73,41 @@ def get_storage_place(db: Session, storage_place_id: int):
 
 def get_storage_places(db: Session, skip: int = 0, limit: int = 100):
     return db.query(StoragePlace).offset(skip).limit(limit).all()
+
+
+def filter_creators(db: Session, name: str, min_age: int):
+    query = select(Creator).where(Creator.name.ilike(f"%{name}%"), Creator.age >= min_age)
+    result = db.execute(query).scalars().all()
+    return result
+
+
+def get_artworks_by_creator(db: Session, creator_id: int):
+    query = select(Artwork).join(Creator).filter(Creator.id == creator_id)
+    result = db.execute(query).scalars().all()
+    return result
+
+
+def update_artwork(db: Session, artwork_id: int, artwork: ArtworkCreate):
+    db_artwork = db.query(Artwork).filter(Artwork.id == artwork_id).first()
+    if db_artwork:
+        if artwork.year > 2000:
+            db_artwork.title = artwork.title
+            db_artwork.year = artwork.year
+            db.commit()
+            db.refresh(db_artwork)
+            return db_artwork
+    return None
+
+def get_creators_with_artworks_count(db: Session):
+    query = select(Creator.name, func.count(Artwork.id)).join(Artwork).group_by(Creator.id)
+    result = db.execute(query).fetchall()
+    return result
+
+
+def get_sorted_creators(db: Session, sort_by: str):
+    sort_column = getattr(Creator, sort_by)
+    query = select(Creator).order_by(sort_column)
+    result = db.execute(query).scalars().all()
+    return result
+
+
